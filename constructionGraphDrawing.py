@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import defaultdict
+from graphDrawing import CityGrid
+import heapq
 
-class CityGrid:
+class CityGridConstruction:
     def __init__(self, rows=5, cols=5):
         self.rows = rows
         self.cols = cols
@@ -13,6 +15,12 @@ class CityGrid:
         self.HIGHWAY = 1      # Green lines
         self.NORMAL = 2       # Orange lines  
         self.CONGESTED = 4    # Red lines
+        self.CONSTRUCTION = None  # Purple lines 
+        self.AFFECTED = None      # Dark Orange lines
+        
+        # Track construction and affected roads
+        self.construction_roads = set()
+        self.affected_roads = set()
         
         self.setup_grid()
         
@@ -24,21 +32,43 @@ class CityGrid:
         """Convert node ID back to (row, col) coordinates"""
         return node_id // self.cols, node_id % self.cols
     
-    def add_connection(self, r1, c1, r2, c2, weight):
+    def add_connection(self, r1, c1, r2, c2, weight, road_type='normal'):
         id1 = self.coord_to_id(r1, c1)
         id2 = self.coord_to_id(r2, c2)
         self.graph[id1].append((id2, weight))
         self.graph[id2].append((id1, weight))
+        
+        # Track special road types
+        edge = tuple(sorted([(r1, c1), (r2, c2)]))
+        if road_type == 'construction':
+            self.construction_roads.add(edge)
+        elif road_type == 'affected':
+            self.affected_roads.add(edge)
     
     def setup_grid(self):   
+        # Define construction areas (these will get +6 weight)
+        construction_segments = [
+            ((1, 2), (2, 2)),  # Main construction
+            ((2, 2), (3, 2))   # Main construction
+        ]
+        
+        affected_segments = [
+            ((0, 2), (1, 2)),  # Connected to construction
+            ((1, 2), (1, 1)),  # Connected to construction
+            ((2, 2), (2, 1)),  # Connected to construction
+            ((2, 2), (2, 3)),  # Connected to construction
+            ((3, 2), (4, 2)),  # Connected to construction
+            ((3, 2), (3, 3))   # Connected to construction
+        ]
+        
         # HIGHWAY CONNECTIONS (Green lines)
         highway_connections = [
             ((0, 0), (0, 1)),
             ((0, 1), (0, 2)),
-            ((0, 2), (1, 2)),
-            ((1, 2), (2, 2)),
-            ((2, 2), (3, 2)),
-            ((3, 2), (4, 2))
+            ((0, 2), (1, 2)),  # This will be affected
+            ((1, 2), (2, 2)),  # This is under construction
+            ((2, 2), (3, 2)),  # This is under construction
+            ((3, 2), (4, 2))   # This will be affected
         ]
         
         # NORMAL ROAD CONNECTIONS (Orange/Yellow lines)
@@ -63,29 +93,67 @@ class CityGrid:
             ((1, 1), (2, 1)),
             ((2, 1), (3, 1)),
             ((3, 1), (4, 1)),
-            ((1, 1), (1, 2)),
+            ((1, 1), (1, 2)),  # This will be affected
             ((2, 0), (2, 1)),
-            ((2, 1), (2, 2)),
-            ((2, 2), (2, 3)),
+            ((2, 1), (2, 2)),  # This will be affected
+            ((2, 2), (2, 3)),  # This will be affected
             ((1, 3), (2, 3)),
-            ((2, 3), (3, 3)),
+            ((2, 3), (3, 3)),  # This will be affected
             ((3, 3), (4, 3)),
             ((1, 0), (2, 0)),
             ((3, 0), (4, 0)),
             ((4, 2), (4, 3)),
-            ((3, 2), (3, 3)),
+            ((3, 2), (3, 3)),  # This will be affected
             ((3, 3), (3, 4)),
         ]
         
-        # Add all connections
+        # Add all connections with appropriate weights
         for (r1, c1), (r2, c2) in highway_connections:
-            self.add_connection(r1, c1, r2, c2, self.HIGHWAY)
+            base_weight = self.HIGHWAY
+            road_type = 'normal'
+            
+            if ((r1, c1), (r2, c2)) in construction_segments or ((r2, c2), (r1, c1)) in construction_segments:
+                # Construction: original weight + 6
+                weight = base_weight + 6
+                road_type = 'construction'
+            elif ((r1, c1), (r2, c2)) in affected_segments or ((r2, c2), (r1, c1)) in affected_segments:
+                # Affected by construction: original weight + 2
+                weight = base_weight + 2
+                road_type = 'affected'
+            else:
+                weight = base_weight
+                
+            self.add_connection(r1, c1, r2, c2, weight, road_type)
             
         for (r1, c1), (r2, c2) in normal_connections:
-            self.add_connection(r1, c1, r2, c2, self.NORMAL)
+            base_weight = self.NORMAL
+            road_type = 'normal'
+            
+            if ((r1, c1), (r2, c2)) in construction_segments or ((r2, c2), (r1, c1)) in construction_segments:
+                weight = base_weight + 6
+                road_type = 'construction'
+            elif ((r1, c1), (r2, c2)) in affected_segments or ((r2, c2), (r1, c1)) in affected_segments:
+                weight = base_weight + 2
+                road_type = 'affected'
+            else:
+                weight = base_weight
+                
+            self.add_connection(r1, c1, r2, c2, weight, road_type)
             
         for (r1, c1), (r2, c2) in congested_connections:
-            self.add_connection(r1, c1, r2, c2, self.CONGESTED)
+            base_weight = self.CONGESTED
+            road_type = 'normal'
+            
+            if ((r1, c1), (r2, c2)) in construction_segments or ((r2, c2), (r1, c1)) in construction_segments:
+                weight = base_weight + 6
+                road_type = 'construction'
+            elif ((r1, c1), (r2, c2)) in affected_segments or ((r2, c2), (r1, c1)) in affected_segments:
+                weight = base_weight + 2
+                road_type = 'affected'
+            else:
+                weight = base_weight
+                
+            self.add_connection(r1, c1, r2, c2, weight, road_type)
     
     def set_fire_station(self, row, col):
         self.fire_station = self.coord_to_id(row, col)
@@ -100,10 +168,11 @@ class CityGrid:
             ax.axvline(x=i-0.5, color='lightgray', linewidth=0.5)
         
         # Draw fire station area
-        fire_square = plt.Rectangle((-0.5, -0.5), 1, 1, facecolor='red', alpha=0.7, edgecolor='darkred', linewidth=2)
+        fr, fc = self.id_to_coord(self.fire_station)
+        fire_square = plt.Rectangle((fc-0.5, fr-0.5), 1, 1, facecolor='red', alpha=0.7, edgecolor='darkred', linewidth=2)
         ax.add_patch(fire_square)
         
-        # Draw roads with different colors based on weights
+        # Draw roads with different colors based on weights and construction status
         drawn_edges = set()
         
         for node_id in self.graph:
@@ -118,19 +187,31 @@ class CityGrid:
                 if edge_key not in drawn_edges:
                     drawn_edges.add(edge_key)
                     
-                    # Choose color and style based on weight
-                    if weight == self.HIGHWAY:
-                        color = 'green'
+                    # Check if this is a construction or affected road
+                    coord_edge = tuple(sorted([(r, c), (nr, nc)]))
+                    
+                    if coord_edge in self.construction_roads:
+                        color = 'purple'
                         linewidth = 8
                         alpha = 0.9
-                    elif weight == self.NORMAL:
-                        color = 'orange'
+                    elif coord_edge in self.affected_roads:
+                        color = '#FF4500'
                         linewidth = 6
                         alpha = 0.8
-                    elif weight == self.CONGESTED:
-                        color = 'red'
-                        linewidth = 6
-                        alpha = 0.8
+                    else:
+                        # Original road coloring based on base weight
+                        if weight <= 1:
+                            color = 'green'
+                            linewidth = 8
+                            alpha = 0.9
+                        elif weight <= 2:
+                            color = 'orange'
+                            linewidth = 6
+                            alpha = 0.8
+                        else:
+                            color = 'red'
+                            linewidth = 6
+                            alpha = 0.8
                     
                     # Draw the road
                     ax.plot([c, nc], [r, nr], color=color, linewidth=linewidth, alpha=alpha)
@@ -152,22 +233,24 @@ class CityGrid:
         ax.set_ylim(-0.5, self.rows - 0.5)
         ax.set_aspect('equal')
         ax.invert_yaxis()  # Make (0,0) at top-left
-        ax.set_title('City Grid - Fire Station Emergency Response Network', fontsize=16, fontweight='bold')
+        ax.set_title('City Grid - Emergency Response Network (CONSTRUCTION SCENARIO)', fontsize=16, fontweight='bold')
         ax.set_xlabel('Column', fontsize=12)
         ax.set_ylabel('Row', fontsize=12)
         
         from matplotlib.lines import Line2D
         legend_elements = [
-            Line2D([0], [0], color='green', lw=8, label='Highway (weight: 1)', alpha=0.9),
-            Line2D([0], [0], color='orange', lw=6, label='Major Road (weight: 2)', alpha=0.8),
-            Line2D([0], [0], color='red', lw=6, label='Congested Area (weight: 4)', alpha=0.8),
+            Line2D([0], [0], color='green', lw=8, label='Highway (normal)', alpha=0.9),
+            Line2D([0], [0], color='orange', lw=6, label='Major Road (normal)', alpha=0.8),
+            Line2D([0], [0], color='red', lw=6, label='Congested Area (normal)', alpha=0.8),
+            Line2D([0], [0], color='purple', lw=8, label='CONSTRUCTION (+6 weight)', alpha=0.9),
+            Line2D([0], [0], color='#FF4500', lw=6, label='Affected by Construction (+2 weight)', alpha=0.8),
             Line2D([0], [0], marker='s', color='darkred', lw=0, markersize=14, label='Fire Station', markerfacecolor='darkred', markeredgecolor='white'),
         ]
         ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(1, 1), fontsize=11)
         
         plt.tight_layout()
         plt.show()
-    
+
     def write_graph_to_file(self, f):
         f.write("=" * 60)
         f.write("\n")

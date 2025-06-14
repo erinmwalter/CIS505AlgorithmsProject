@@ -1,0 +1,125 @@
+CONSTRUCTION IMPACT COMPARISON
+======================================================================
+Fire Station at (0,0) - Normal vs Construction Scenario
+======================================================================
+
+RESPONSE TIME COMPARISON BY LOCATION:
+----------------------------------------------------------------------
+Location   Normal   Construction Increase  % Increase
+----------------------------------------------------------------------
+(0,1)       1.0         1.0      0.0      0.0%
+(0,2)       2.0         2.0      0.0      0.0%
+(0,3)       4.0         4.0      0.0      0.0%
+(0,4)       6.0         6.0      0.0      0.0%
+(1,0)       7.0         7.0      0.0      0.0%
+(1,1)       5.0         5.0      0.0      0.0%
+(1,2)       3.0         5.0      2.0     66.7%
+(1,3)      10.0        10.0      0.0      0.0%
+(1,4)       8.0         8.0      0.0      0.0%
+(2,0)      11.0        11.0      0.0      0.0%
+(2,1)       8.0         9.0      1.0     12.5%
+(2,2)       4.0        12.0      8.0    200.0%
+(2,3)       8.0        14.0      6.0     75.0%
+(2,4)      10.0        16.0      6.0     60.0%
+(3,0)      14.0        15.0      1.0      7.1%
+(3,1)      12.0        13.0      1.0      8.3%
+(3,2)       5.0        19.0     14.0    280.0%
+(3,3)       9.0        16.0      7.0     77.8%
+(3,4)      12.0        18.0      6.0     50.0%
+(4,0)      10.0        19.0      9.0     90.0%
+(4,1)       8.0        17.0      9.0    112.5%
+(4,2)       6.0        19.0     13.0    216.7%
+(4,3)      10.0        20.0     10.0    100.0%
+(4,4)      12.0        22.0     10.0     83.3%
+
+======================================================================
+OVERALL IMPACT SUMMARY:
+======================================================================
+Average response time (normal):       7.71 minutes
+Average response time (construction):  12.00 minutes
+Average increase:                     4.29 minutes
+Overall percentage increase:          55.7%
+
+Most affected location: (3,2)
+  - Increase: +14.0 minutes (+280.0%)
+
+======================================================================
+ROUTE CHANGE ANALYSIS:
+======================================================================
+Locations with route changes:
+--------------------------------------------------
+(2,1): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (2,1)
+  Construction: (0,0) -> (0,1) -> (1,1) -> (2,1)
+  * Avoids construction zones
+
+(2,3): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (2,3)
+  Construction: (0,0) -> (0,1) -> (0,2) -> (0,3) -> (0,4) -> (1,4) -> (1,3) -> (2,3)
+  * Avoids construction zones
+
+(2,4): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (2,3) -> (2,4)
+  Construction: (0,0) -> (0,1) -> (0,2) -> (0,3) -> (0,4) -> (1,4) -> (1,3) -> (2,3) -> (2,4)
+  * Avoids construction zones
+
+(3,0): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (4,2) -> (4,1) -> (4,0) -> (3,0)
+  Construction: (0,0) -> (0,1) -> (1,1) -> (2,1) -> (3,1) -> (3,0)
+  * Avoids construction zones
+
+(3,1): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (2,1) -> (3,1)
+  Construction: (0,0) -> (0,1) -> (1,1) -> (2,1) -> (3,1)
+  * Avoids construction zones
+
+(3,3): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (3,3)
+  Construction: (0,0) -> (0,1) -> (0,2) -> (0,3) -> (0,4) -> (1,4) -> (1,3) -> (2,3) -> (3,3)
+  * Avoids construction zones
+
+(3,4): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (2,3) -> (2,4) -> (3,4)
+  Construction: (0,0) -> (0,1) -> (0,2) -> (0,3) -> (0,4) -> (1,4) -> (1,3) -> (2,3) -> (2,4) -> (3,4)
+  * Avoids construction zones
+
+(4,0): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (4,2) -> (4,1) -> (4,0)
+  Construction: (0,0) -> (0,1) -> (1,1) -> (2,1) -> (3,1) -> (3,0) -> (4,0)
+  * Avoids construction zones
+
+(4,1): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (4,2) -> (4,1)
+  Construction: (0,0) -> (0,1) -> (1,1) -> (2,1) -> (3,1) -> (4,1)
+  * Avoids construction zones
+
+(4,2): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (4,2)
+  Construction: (0,0) -> (0,1) -> (1,1) -> (2,1) -> (3,1) -> (4,1) -> (4,2)
+  * Avoids construction zones
+
+(4,3): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (4,2) -> (4,3)
+  Construction: (0,0) -> (0,1) -> (0,2) -> (0,3) -> (0,4) -> (1,4) -> (1,3) -> (2,3) -> (3,3) -> (4,3)
+  * Avoids construction zones
+
+(4,4): Route changed
+  Normal:       (0,0) -> (0,1) -> (0,2) -> (1,2) -> (2,2) -> (3,2) -> (4,2) -> (4,3) -> (4,4)
+  Construction: (0,0) -> (0,1) -> (0,2) -> (0,3) -> (0,4) -> (1,4) -> (1,3) -> (2,3) -> (3,3) -> (4,3) -> (4,4)
+  * Avoids construction zones
+
+
+--------------------------------------------------
+ROUTE CHANGE SUMMARY:
+--------------------------------------------------
+Total destinations analyzed:           24
+Routes that changed:                   12
+Routes that stayed the same:           12
+Routes now avoiding construction:      12
+Percentage of routes changed:          50.0%
+
+Routes still using construction zones:
+  (2,2): Still uses construction zone
+  (3,2): Still uses construction zone
+
+Routes still using construction zones: 2
