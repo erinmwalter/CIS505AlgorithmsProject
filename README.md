@@ -16,10 +16,10 @@ There is a 5x5 grid for the city with the firestation located in (0, 0). There a
 - Red = Congested road, weight of 4
 
 #### Graph of Original Road Layout
-![City Grid Network](cityGraphic.png)
+![City Grid Network](diagrams/cityGraphic.png)
 
 #### Heatmap for Original Layout
-![Heatmap Original](heatMap_before.png)
+![Heatmap Original](diagrams/heatMap_before.png)
 
 ### Construction Routing
 The same 5x4 grid is used for the city with the firestation in (0,0).
@@ -43,10 +43,10 @@ The affected roads are:
 - (3,2) -> (4,2)
 
 #### Construction Road Layout
-![Construction Layout](cityGraphConstruction.png)
+![Construction Layout](diagrams/cityGraphConstruction.png)
 
 #### Construction Heatmap
-![Construction Heatmap](heatMap_construction.png)
+![Construction Heatmap](diagrams/heatMap_construction.png)
 
 ### New Temporary Firestation Addition during Construction
 The final scenario that was done was to simulate a city planning decision to alleviate response time increase during construction. City planning approved two possible spots for a new temporary firestation: (2,0) or (1,4) and wants to see if either of these are suitable to help cut down on response times, especially in the southeast corner of the city. 
@@ -54,20 +54,21 @@ To simulate this, Dijkstra's algorithm was run on each of these new spots to fin
 Once this was run, a comparison analysis was done using a Greedy Selection Algorithm to determine which new location, overall, if added as an additional firestation would cut down on response times the best. 
 
 #### City Layout A (New Firestation placed at (1,4))
-![Scenario A Layout](altFireStation14.png)
+![Scenario A Layout](diagrams/altFireStation14.png)
 #### Heatmap Layout A (New Firestation placed at (1,4))
-![Scenario A Heatmap](altHeatMap14.png)
+![Scenario A Heatmap](diagrams/altHeatMap14.png)
 
 #### City Layout B (New Firestation placed at (2,0))
-![Scenario B Layout](altFireStation20.png)
+![Scenario B Layout](diagrams/altFireStation20.png)
 #### Heatmap Layout B (New Firestation placed at (2,0))
-![Scenario B Heatmap](altFireStation20HeatMap.png)
+![Scenario B Heatmap](diagrams/altFireStation20HeatMap.png)
 
 
 #### Optimal Heatmap With Two Firestations
-![Both Heatmap](HeatMapBothFireStations.png)
+![Both Heatmap](diagrams/HeatMapBothFireStations.png)
 
 #### Analysis
-- [Normal Scenario Analysis](fireStationAnalysis.txt)
-- [Construction Scenario Analysis](constructionFirestationAnalysis.txt) 
-- [Multiple Station Location Analysis](fireStationAnalysis_multiplelocations.txt)
+- [Normal Scenario Analysis](analysis/fireStationAnalysis.txt)
+- [Construction Scenario Analysis](analysis/constructionFirestationAnalysis.txt) 
+- [Comparison Analysis between Normal and Construction](analysis/comparisonAnalysis.txt)
+- [Multiple Station Location Analysis](analysis/fireStationAnalysis_multiplelocations.txt)
